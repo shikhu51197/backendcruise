@@ -6,17 +6,13 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 userRouter.post("/register", async (req, res) => {
-  const { name, email, password,confirmPass, country, Mobile, Address, Zip } = req.body;
-  const data = await UserModel.find({
-    $or: [{ email:email}, { Mobile:Mobile}],
-  });
+  const { name, email, password,confirmPass, country, Mobile, Address,image , Zip ,NumberOfOrders} = req.body;
+  
 
   if (password !== confirmPass) {
     res.send({ "msg": "password must be same" });
   } else {
-    if (data.length > 0) {
-      res.send({ "msg": "user already exist" });
-    } else {
+  
       bcrypt.hash(password, 5, async (err, hash) => {
         try {
           if (err) {
@@ -29,7 +25,9 @@ userRouter.post("/register", async (req, res) => {
               confirmPass: hash,
               country,
               Mobile,
+              image,
               Address,
+              NumberOfOrders,
               Zip,
             });
             await user.save();
@@ -40,14 +38,9 @@ userRouter.post("/register", async (req, res) => {
           res.send({ "msg": "something went wrong", "error": error.message });
         }
       });
-    }
+    
   }
 });
-
-
-
-
-
 
 
 userRouter.post("/login", async (req, res) => {
